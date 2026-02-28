@@ -15,8 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Hackathon Starter",
-  description: "Next.js + Express Auth Starter",
+  title: "HealthClinic AI | AI Clinic Management",
+  description:
+    "Smart diagnosis, digital prescriptions, and medical history. Streamline your clinic with AI.",
 };
 
 export default function RootLayout({

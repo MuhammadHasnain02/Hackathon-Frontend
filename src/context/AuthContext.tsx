@@ -3,16 +3,17 @@
 import { createContext, useContext, ReactNode } from "react";
 import { useMe, useLogin, useRegister, useLogout } from "@/api/queries";
 import type { User } from "@/api/auth";
+import { ROLE_STORAGE_KEY, type UserRole } from "@/types/auth";
 
 interface AuthContextType {
-  user: User | null;
+  user: (User & { role?: UserRole }) | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string, role?: UserRole) => Promise<void>;
   logout: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const hasToken = typeof window !== "undefined" && !!localStorage.getItem("accessToken");
@@ -21,19 +22,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const registerMutation = useRegister();
   const logoutMutation = useLogout();
 
-  const user = meQuery.data?.user ?? null;
+  const rawUser = meQuery.data?.user ?? null;
   const loading = hasToken && meQuery.isLoading;
+
+  // Merge role from localStorage (backend may not return it yet)
+  const user = rawUser
+    ? {
+        ...rawUser,
+        role:
+          rawUser.role ??
+          (typeof window !== "undefined"
+            ? (localStorage.getItem(ROLE_STORAGE_KEY) as UserRole | null)
+            : null) ??
+          undefined,
+      }
+    : null;
 
   const login = async (email: string, password: string) => {
     await loginMutation.mutateAsync({ email, password });
   };
 
-  const register = async (email: string, password: string) => {
+  const register = async (email: string, password: string, role?: UserRole) => {
     await registerMutation.mutateAsync({ email, password });
+    if (role && typeof window !== "undefined") {
+      localStorage.setItem(ROLE_STORAGE_KEY, role);
+    }
   };
 
   const logout = async () => {
     await logoutMutation.mutateAsync();
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(ROLE_STORAGE_KEY);
+    }
   };
 
   return (

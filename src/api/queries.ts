@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { authApi } from "./auth";
+import { ROLE_STORAGE_KEY } from "@/types/auth";
 
 export const authKeys = {
   me: ["auth", "me"] as const,
@@ -33,8 +34,15 @@ export function useRegister() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ email, password }: { email: string; password: string }) =>
-      authApi.register(email, password),
+    mutationFn: ({
+      email,
+      password,
+      role,
+    }: {
+      email: string;
+      password: string;
+      role?: string;
+    }) => authApi.register(email, password, role),
     onSuccess: (data) => {
       localStorage.setItem("accessToken", data.accessToken);
       localStorage.setItem("refreshToken", data.refreshToken);
@@ -51,12 +59,14 @@ export function useLogout() {
     onSuccess: () => {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
+      localStorage.removeItem(ROLE_STORAGE_KEY);
       queryClient.setQueryData(authKeys.me, null);
       queryClient.clear();
     },
     onError: () => {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
+      localStorage.removeItem(ROLE_STORAGE_KEY);
       queryClient.setQueryData(authKeys.me, null);
       queryClient.clear();
     },

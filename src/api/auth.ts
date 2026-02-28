@@ -1,8 +1,11 @@
 import api from "@/lib/api";
 
+import type { UserRole } from "@/types/auth";
+
 export interface User {
   id: string;
   email: string;
+  role?: UserRole;
 }
 
 export interface AuthResponse {
@@ -19,8 +22,10 @@ export const authApi = {
   login: (email: string, password: string) =>
     api.post<AuthResponse>("/auth/login", { email, password }).then((r) => r.data),
 
-  register: (email: string, password: string) =>
-    api.post<AuthResponse>("/auth/register", { email, password }).then((r) => r.data),
+  register: (email: string, password: string, role?: string) =>
+    api
+      .post<AuthResponse>("/auth/register", { email, password, role })
+      .then((r) => r.data),
 
   logout: () => api.post("/auth/logout").then((r) => r.data),
 
