@@ -52,7 +52,7 @@ export default function PatientDashboardContent() {
             ) : (
               appointments.slice(0, 5).map((apt) => (
                 <div key={apt._id} className="flex gap-3">
-                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-teal-100 dark:bg-teal-900/50">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-teal-100 dark:bg-teal-900/50">
                     <Calendar className="h-5 w-5 text-teal-600" />
                   </div>
                   <div>

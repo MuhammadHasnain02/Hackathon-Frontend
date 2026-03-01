@@ -42,7 +42,7 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       <div className="mx-auto flex min-h-screen max-w-6xl gap-6 px-4 py-6 md:px-6">
-        <aside className="hidden w-56 flex-shrink-0 flex-col justify-between rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:flex">
+        <aside className="hidden w-56 shrink-0 flex-col justify-between rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:flex">
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-600 text-white">

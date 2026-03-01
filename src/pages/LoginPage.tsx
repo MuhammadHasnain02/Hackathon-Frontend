@@ -10,6 +10,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import Footer from "@/components/common/Footer";
+import { Stethoscope } from "lucide-react";
 
 /**
  * Login page with form validation and loading states.
@@ -58,20 +60,34 @@ export default function LoginPage() {
   return (
     <ErrorBoundary>
       <RoleGuard>
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+        <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950">
+          <div className="pointer-events-none fixed inset-0 z-0">
+            <div className="absolute left-1/2 top-0 h-[400px] w-[600px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,_rgba(20,184,166,0.12)_0%,transparent_60%)] blur-3xl" />
+          </div>
           <Navbar />
-          <main className="flex min-h-[calc(100vh-56px)] items-center justify-center px-4 py-10">
-            <div className="w-full max-w-md space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-lg dark:border-slate-800 dark:bg-slate-900">
+          <main className="relative z-10 flex min-h-[calc(100vh-56px)] flex-col items-center justify-center px-4 py-10">
+            <div className="mb-6 flex flex-col items-center gap-2">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-cyan-600 text-white shadow-lg shadow-teal-500/25">
+                <Stethoscope className="h-6 w-6" aria-hidden />
+              </div>
+              <span className="font-[family-name:var(--font-montserrat)] text-lg font-bold tracking-tight text-slate-50">
+                HealthClinic AI
+              </span>
+              <span className="text-xs font-medium uppercase tracking-wider text-cyan-400/90">
+                AI Clinic Management
+              </span>
+            </div>
+            <div className="w-full max-w-md space-y-6 rounded-2xl border border-white/10 bg-slate-800/50 p-6 shadow-2xl backdrop-blur-sm sm:p-8">
               <div className="space-y-1 text-center">
-                <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+                <h1 className="font-[family-name:var(--font-montserrat)] text-2xl font-bold tracking-tight text-slate-50">
                   Welcome back
                 </h1>
-                <p className="text-sm text-slate-600 dark:text-slate-400">
+                <p className="text-sm text-slate-400">
                   Sign in to access your AI Clinic dashboard.
                 </p>
               </div>
               {error && (
-                <p className="rounded-xl border border-red-200 bg-red-50 p-3 text-center text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-200">
+                <p className="rounded-xl border border-red-500/30 bg-red-950/40 p-3 text-center text-sm text-red-200">
                   {error}
                 </p>
               )}
@@ -79,7 +95,7 @@ export default function LoginPage() {
                 <div className="space-y-1.5">
                   <label
                     htmlFor="email"
-                    className="block text-sm font-medium text-slate-700 dark:text-slate-200"
+                    className="block text-sm font-medium text-slate-300"
                   >
                     Email
                   </label>
@@ -92,14 +108,14 @@ export default function LoginPage() {
                       setEmail(e.target.value);
                       setFieldErrors((prev) => ({ ...prev, email: undefined }));
                     }}
-                    className={`w-full rounded-xl border px-3 py-2.5 text-sm outline-none transition focus:ring-2 focus:ring-teal-500 disabled:opacity-60 dark:bg-slate-950 dark:text-slate-100 ${
+                    className={`w-full rounded-xl border bg-slate-900/80 px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-500 outline-none transition focus:ring-2 focus:ring-teal-500/50 disabled:opacity-60 ${
                       fieldErrors.email
-                        ? "border-red-500 focus:ring-red-500"
-                        : "border-slate-300 dark:border-slate-700"
+                        ? "border-red-500 focus:ring-red-500/50"
+                        : "border-white/10 focus:border-teal-500"
                     }`}
                   />
                   {fieldErrors.email && (
-                    <p className="text-xs text-red-600 dark:text-red-400">
+                    <p className="text-xs text-red-400">
                       {fieldErrors.email}
                     </p>
                   )}
@@ -107,7 +123,7 @@ export default function LoginPage() {
                 <div className="space-y-1.5">
                   <label
                     htmlFor="password"
-                    className="block text-sm font-medium text-slate-700 dark:text-slate-200"
+                    className="block text-sm font-medium text-slate-300"
                   >
                     Password
                   </label>
@@ -120,14 +136,14 @@ export default function LoginPage() {
                       setPassword(e.target.value);
                       setFieldErrors((prev) => ({ ...prev, password: undefined }));
                     }}
-                    className={`w-full rounded-xl border px-3 py-2.5 text-sm outline-none transition focus:ring-2 focus:ring-teal-500 disabled:opacity-60 dark:bg-slate-950 dark:text-slate-100 ${
+                    className={`w-full rounded-xl border bg-slate-900/80 px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-500 outline-none transition focus:ring-2 focus:ring-teal-500/50 disabled:opacity-60 ${
                       fieldErrors.password
-                        ? "border-red-500 focus:ring-red-500"
-                        : "border-slate-300 dark:border-slate-700"
+                        ? "border-red-500 focus:ring-red-500/50"
+                        : "border-white/10 focus:border-teal-500"
                     }`}
                   />
                   {fieldErrors.password && (
-                    <p className="text-xs text-red-600 dark:text-red-400">
+                    <p className="text-xs text-red-400">
                       {fieldErrors.password}
                     </p>
                   )}
@@ -138,21 +154,23 @@ export default function LoginPage() {
                   fullWidth
                   isLoading={loading}
                   disabled={loading}
+                  className="bg-teal-500 font-[family-name:var(--font-montserrat)] font-bold text-slate-900 shadow-lg shadow-teal-500/30 hover:bg-teal-400 focus:ring-teal-500/50"
                 >
                   {loading ? "Signing in..." : "Sign in"}
                 </Button>
               </form>
-              <p className="text-center text-sm text-slate-600 dark:text-slate-400">
+              <p className="text-center text-sm text-slate-400">
                 Don&apos;t have an account?{" "}
                 <Link
                   href="/signup"
-                  className="font-medium text-teal-600 hover:text-teal-700 dark:text-teal-400"
+                  className="font-medium text-teal-400 hover:text-teal-300"
                 >
                   Sign up
                 </Link>
               </p>
             </div>
           </main>
+          <Footer />
         </div>
       </RoleGuard>
     </ErrorBoundary>

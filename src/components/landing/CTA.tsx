@@ -10,7 +10,7 @@ export default function CTA() {
   return (
     <section
       id="cta"
-      className="border-t border-white/10 bg-gradient-to-b from-slate-950 to-slate-900 py-16 md:py-24"
+      className="border-t border-white/10 bg-linear-to-b from-slate-950 to-slate-900 py-16 md:py-24"
     >
       <div className="mx-auto max-w-4xl px-4 text-center md:px-6">
         <motion.div
