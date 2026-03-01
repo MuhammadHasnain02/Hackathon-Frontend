@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
-import Button from "@/components/common/Button";
+import { Button } from "@/components/common/Button";
 
 interface AddStaffModalProps {
   isOpen: boolean;

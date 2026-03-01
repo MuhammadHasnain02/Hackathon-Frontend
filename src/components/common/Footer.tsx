@@ -1,45 +1,93 @@
 "use client";
 
 import Link from "next/link";
+import { Stethoscope, Github, Linkedin, Twitter, Mail } from "lucide-react";
 
 const footerLinks = [
-  { href: "/features", label: "Features" },
+  { href: "#features", label: "Features" },
   { href: "/login", label: "Login" },
   { href: "/signup", label: "Sign Up" },
-  { href: "/", label: "Privacy" },
-  { href: "/", label: "Terms" },
+  { href: "/privacy", label: "Privacy" },
+  { href: "/terms", label: "Terms" },
+];
+
+const socialLinks = [
+  { href: "https://github.com", label: "GitHub", icon: Github },
+  { href: "https://linkedin.com", label: "LinkedIn", icon: Linkedin },
+  { href: "https://twitter.com", label: "Twitter", icon: Twitter },
 ];
 
 /**
- * Reusable footer for landing and auth pages.
- * Medical SaaS theme with teal accent.
+ * Footer with Roboto-style body, social icons, and quick links.
+ * Clean layout for landing and auth pages.
  */
 export default function Footer() {
   return (
-    <footer className="border-t border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 py-6 md:flex-row md:px-6">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-600 text-sm font-bold text-white">
-            HC
-          </div>
-          <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-            HealthClinic AI
-          </span>
-        </div>
-        <nav className="flex flex-wrap items-center justify-center gap-4 text-sm">
-          {footerLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-slate-600 transition hover:text-teal-600 dark:text-slate-400 dark:hover:text-teal-400"
-            >
-              {link.label}
+    <footer className="border-t border-white/10 bg-slate-950">
+      <div className="mx-auto max-w-6xl px-4 py-12 md:px-6">
+        <div className="grid gap-8 md:grid-cols-4">
+          <div className="md:col-span-2">
+            <Link href="/" className="inline-flex items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-teal-500 to-cyan-600 text-white">
+                <Stethoscope className="h-4 w-4" aria-hidden />
+              </div>
+              <span className="font-[family-name:var(--font-roboto)] text-base font-bold text-slate-100">
+                HealthClinic AI
+              </span>
             </Link>
-          ))}
-        </nav>
-        <p className="text-xs text-slate-500 dark:text-slate-400">
-          © {new Date().getFullYear()} HealthClinic AI. HIPAA-ready.
-        </p>
+            <p className="mt-3 max-w-sm font-[family-name:var(--font-roboto)] text-sm leading-relaxed text-slate-400">
+              AI-powered clinic management. Smart diagnosis, prescriptions, and patient records in one place.
+            </p>
+            <div className="mt-4 flex gap-3">
+              {socialLinks.map(({ href, label, icon: Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-700 bg-slate-800/50 text-slate-400 transition hover:border-cyan-500/50 hover:text-cyan-400"
+                  aria-label={label}
+                >
+                  <Icon className="h-4 w-4" />
+                </a>
+              ))}
+            </div>
+          </div>
+          <div>
+            <h4 className="font-[family-name:var(--font-roboto)] text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Quick links
+            </h4>
+            <ul className="mt-3 space-y-2">
+              {footerLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="font-[family-name:var(--font-roboto)] text-sm text-slate-400 transition hover:text-cyan-400"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-[family-name:var(--font-roboto)] text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Contact
+            </h4>
+            <a
+              href="mailto:hello@healthclinicaidemo.com"
+              className="mt-3 inline-flex items-center gap-2 font-[family-name:var(--font-roboto)] text-sm text-slate-400 transition hover:text-cyan-400"
+            >
+              <Mail className="h-4 w-4" />
+              hello@healthclinicaidemo.com
+            </a>
+          </div>
+        </div>
+        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 md:flex-row">
+          <p className="font-[family-name:var(--font-roboto)] text-xs text-slate-500">
+            © {new Date().getFullYear()} HealthClinic AI. HIPAA-ready.
+          </p>
+        </div>
       </div>
     </footer>
   );
