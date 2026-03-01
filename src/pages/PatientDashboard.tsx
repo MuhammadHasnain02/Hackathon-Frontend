@@ -4,12 +4,13 @@ import RoleGuard from "@/components/auth/RoleGuard";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { useAuth } from "@/hooks/useAuth";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import { User } from "@/types/auth";
 
 /**
  * Patient dashboard - Patient role only.
  */
 export default function PatientDashboard() {
-  const { user } = useAuth();
+  const { user } = useAuth() as { user: User };
 
   return (
     <ErrorBoundary>

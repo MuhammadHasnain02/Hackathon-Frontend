@@ -20,7 +20,7 @@ export default function ReceptionistDashboardView() {
 
   const { data, isLoading } = useQuery({
     queryKey: ["appointments"],
-    queryFn: () => appointmentsApi.list(),
+    queryFn: () => appointmentsApi.getList(),
   });
 
   const appointments = data?.appointments ?? [];

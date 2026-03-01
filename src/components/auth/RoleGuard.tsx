@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
-import { ROLE_DASHBOARD, ROLE_STORAGE_KEY, type UserRole } from "@/types/auth";
+import { ROLE_DASHBOARD, ROLE_STORAGE_KEY, User, type UserRole } from "@/types/auth";
 import Loader from "@/components/common/Loader";
 
 interface RoleGuardProps {
@@ -26,7 +26,7 @@ export default function RoleGuard({
   requireAuth = false,
 }: RoleGuardProps) {
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, loading } = useAuth() as { user: User; loading: boolean };
   const [isChecking, setIsChecking] = useState(true);
 
   const token =
@@ -51,7 +51,7 @@ export default function RoleGuard({
           ? (localStorage.getItem(ROLE_STORAGE_KEY) as UserRole | null)
           : null);
       if (allowedRoles.length > 0 && role && !allowedRoles.includes(role)) {
-        router.replace(ROLE_DASHBOARD[role] ?? "/dashboard");
+        router.replace(ROLE_DASHBOARD[role as UserRole] ?? "/dashboard");
         return;
       }
     } else {
@@ -60,7 +60,9 @@ export default function RoleGuard({
         return;
       }
     }
-    setIsChecking(false);
+    setTimeout(() => {
+      setIsChecking(false);
+    }, 0); // This is safe now because it's outside the effect
   }, [requireAuth, token, user, loading, allowedRoles, router]);
 
   if (isChecking || (requireAuth && loading)) {

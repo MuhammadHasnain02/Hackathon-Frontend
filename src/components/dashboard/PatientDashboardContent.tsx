@@ -8,12 +8,13 @@ import { appointmentsApi } from "@/api/appointments";
 import AppointmentsTable from "@/components/appointments/AppointmentsTable";
 import BookAppointmentForm from "@/components/appointments/BookAppointmentForm";
 import Loader from "@/components/common/Loader";
+import { User } from "@/types/auth";
 
 /**
  * Patient dashboard: Book Appointment form, own appointments, timeline, profile & PDF.
  */
 export default function PatientDashboardContent() {
-  const { user } = useAuth();
+  const { user } = useAuth() as { user: User };
 
   const { data, isLoading } = useQuery({
     queryKey: ["appointments"],

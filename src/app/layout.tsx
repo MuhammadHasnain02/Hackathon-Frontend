@@ -41,7 +41,9 @@ export default function RootLayout({
         className={`${montserrat.variable} ${openSans.variable} ${roboto.variable} font-sans antialiased`}
       >
         <QueryProvider>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
         </QueryProvider>
       </body>
     </html>

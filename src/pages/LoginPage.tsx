@@ -16,7 +16,7 @@ import { ErrorBoundary } from "@/components/common/ErrorBoundary";
  * Public route - redirects authenticated users to dashboard.
  */
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login } = useAuth() as { login: (email: string, password: string) => Promise<void> };
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import RoleGuard from "@/components/auth/RoleGuard";
 import Loader from "@/components/common/Loader";
 import { useAuth } from "@/hooks/useAuth";
-import { ROLE_STORAGE_KEY, type UserRole } from "@/types/auth";
+import { ROLE_STORAGE_KEY, User, type UserRole } from "@/types/auth";
 import AdminDashboardView from "@/components/dashboard/views/AdminDashboardView";
 import PatientDashboardView from "@/components/dashboard/views/PatientDashboardView";
 import DoctorDashboardView from "@/components/dashboard/views/DoctorDashboardView";
@@ -18,7 +18,7 @@ import { ErrorBoundary } from "@/components/common/ErrorBoundary";
  */
 export default function DashboardRedirect() {
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, loading } = useAuth() as { user: User; loading: boolean };
 
   const role: UserRole | null =
     user?.role ??

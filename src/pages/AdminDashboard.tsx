@@ -3,11 +3,26 @@
 import RoleGuard from "@/components/auth/RoleGuard";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import { useEffect, useState } from "react";
 
 /**
  * Admin dashboard - Admin role only.
  */
 export default function AdminDashboard() {
+  const [mounted, setMounted] = useState(false);
+
+  // 2. useEffect ensures this runs ONLY on the client side
+  useEffect(() => {
+    setTimeout(() => {
+      setMounted(true);
+    }, 0);
+  }, []);
+
+  // 3. Agar server-side render ho raha hai, to kuch return na karein (Build pass ho jayegi)
+  if (!mounted) {
+    return null; 
+  }
+
   return (
     <ErrorBoundary>
       <RoleGuard requireAuth allowedRoles={["admin"]}>

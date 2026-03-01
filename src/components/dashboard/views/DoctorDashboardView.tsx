@@ -14,7 +14,7 @@ export default function DoctorDashboardView() {
 
   const { data, isLoading } = useQuery({
     queryKey: ["appointments"],
-    queryFn: () => appointmentsApi.list(),
+    queryFn: () => appointmentsApi.getList(),
   });
 
   const confirmMutation = useMutation({

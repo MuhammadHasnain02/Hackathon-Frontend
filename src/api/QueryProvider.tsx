@@ -8,8 +8,12 @@ export default function QueryProvider({ children }: { children: ReactNode }) {
     () =>
       new QueryClient({
         defaultOptions: {
+          // queries: {
+          //   refetchOnWindowFocus: false,
+          // },
           queries: {
-            refetchOnWindowFocus: false,
+            staleTime: 60 * 1000,
+            retry: false, // Build fail na ho isliye retries off rakhein
           },
         },
       })

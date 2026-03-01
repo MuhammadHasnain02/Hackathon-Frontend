@@ -15,11 +15,11 @@ export default function PatientDashboardView() {
 
   const { data, isLoading } = useQuery({
     queryKey: ["appointments"],
-    queryFn: () => appointmentsApi.list(),
+    queryFn: () => appointmentsApi.getList(),
   });
 
   const createMutation = useMutation({
-    mutationFn: () => appointmentsApi.create(scheduledAt, reason || undefined),
+    mutationFn: () => appointmentsApi.create({ scheduledAt, reason: reason || undefined }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
       setScheduledAt("");

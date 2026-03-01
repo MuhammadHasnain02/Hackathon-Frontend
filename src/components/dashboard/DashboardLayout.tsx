@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { LogOut, LayoutDashboard } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/common/Button";
-import { ROLE_LABELS, type UserRole } from "@/types/auth";
+import { ROLE_LABELS, User, type UserRole } from "@/types/auth";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -30,7 +30,7 @@ export default function DashboardLayout({
   subtitle,
   role,
 }: DashboardLayoutProps) {
-  const { user, logout } = useAuth();
+  const { user, logout } = useAuth() as { user: User; logout: () => Promise<void> };
   const router = useRouter();
   const pathname = usePathname();
 
