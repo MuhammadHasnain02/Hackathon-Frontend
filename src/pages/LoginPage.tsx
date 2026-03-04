@@ -59,15 +59,15 @@ export default function LoginPage() {
 
   return (
     <ErrorBoundary>
-      <RoleGuard>
-        <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950">
+      <RoleGuard requireAuth={false}>
+        <div className="min-h-screen bg-linear-to-b from-slate-900 via-slate-950 to-slate-950">
           <div className="pointer-events-none fixed inset-0 z-0">
             <div className="absolute left-1/2 top-0 h-[400px] w-[600px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,_rgba(20,184,166,0.12)_0%,transparent_60%)] blur-3xl" />
           </div>
           <Navbar />
           <main className="relative z-10 flex min-h-[calc(100vh-56px)] flex-col items-center justify-center px-4 py-10">
             <div className="mb-6 flex flex-col items-center gap-2">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-cyan-600 text-white shadow-lg shadow-teal-500/25">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br from-teal-500 to-cyan-600 text-white shadow-lg shadow-teal-500/25">
                 <Stethoscope className="h-6 w-6" aria-hidden />
               </div>
               <span className="font-[family-name:var(--font-montserrat)] text-lg font-bold tracking-tight text-slate-50">

@@ -143,7 +143,25 @@ export default function ReceptionistDashboardView() {
                       <td className="py-2 text-slate-800 dark:text-slate-200">{apt.patientId?.email ?? "—"}</td>
                       <td className="py-2 text-slate-600 dark:text-slate-300">{new Date(apt.scheduledAt).toLocaleString()}</td>
                       <td className="py-2">
-                        <span className="rounded-full px-2 py-0.5 text-xs font-medium bg-slate-100 dark:bg-slate-800">{apt.status}</span>
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                            apt.status === "pending"
+                              ? "bg-amber-100 text-amber-800 dark:bg-amber-900/50"
+                              : apt.status === "confirmed"
+                              ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50"
+                              : apt.status === "cancelled"
+                              ? "bg-red-100 text-red-800 dark:bg-red-900/50"
+                              : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                          }`}
+                        >
+                          {apt.status === "pending"
+                            ? "Pending"
+                            : apt.status === "confirmed"
+                            ? "Accepted"
+                            : apt.status === "cancelled"
+                            ? "Declined"
+                            : apt.status}
+                        </span>
                       </td>
                       <td className="max-w-[200px] truncate py-2 text-slate-500 dark:text-slate-400">{apt.diagnosis || "—"}</td>
                     </tr>

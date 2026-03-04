@@ -67,11 +67,16 @@ export default function SignupPage() {
       await register(email, password, role);
       router.push("/dashboard");
     } catch (err) {
+
+      console.error("Auth Error:", err);
       if (axios.isAxiosError(err)) {
         setError(err.response?.data?.message ?? "Sign up failed");
+        console.error("Auth Error response:", err.response?.data?.error ?? "Sign up failed");
       } else {
         setError("Sign up failed");
+        console.error("Auth Error (non-Axios):", (err as Error).message ?? "Sign up failed");
       }
+
     } finally {
       setLoading(false);
     }
@@ -79,7 +84,7 @@ export default function SignupPage() {
 
   return (
     <ErrorBoundary>
-      <RoleGuard>
+      <RoleGuard requireAuth={false}>
         <div className="min-h-screen bg-linear-to-b from-slate-900 via-slate-950 to-slate-950">
           <div className="pointer-events-none fixed inset-0 z-0">
             <div className="absolute left-1/2 top-0 h-[400px] w-[600px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,_rgba(20,184,166,0.12)_0%,transparent_60%)] blur-3xl" />

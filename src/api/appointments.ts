@@ -18,7 +18,7 @@ export const appointmentsApi = {
   getList: () =>
     api.get<{ appointments: Appointment[] }>("/appointments").then((r) => r.data),
 
-  create: (data: { scheduledAt: string; reason?: string }) =>
+  create: (data: { scheduledAt: string; reason?: string; doctorId?: string }) =>
     api
       .post<{ appointment: Appointment }>("/appointments", data)
       .then((r) => r.data),
@@ -30,4 +30,7 @@ export const appointmentsApi = {
     api
       .patch<{ appointment: Appointment }>(`/appointments/${id}`, data)
       .then((r) => r.data),
+
+  remove: (id: string) =>
+    api.delete<void>(`/appointments/${id}`).then((r) => r.data),
 };

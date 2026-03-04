@@ -6,6 +6,9 @@ import { CalendarPlus } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { appointmentsApi } from "@/api/appointments";
 
+// import { useQuery } from "@tanstack/react-query";
+// import { doctorsApi } from "@/api/doctors"; // Assume karein ke ye API bani hui hai
+
 export default function BookAppointmentForm() {
   const queryClient = useQueryClient();
   const [scheduledAt, setScheduledAt] = useState("");

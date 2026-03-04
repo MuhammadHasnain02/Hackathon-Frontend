@@ -38,12 +38,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     : null;
 
+  // const login = async (email: string, password: string) => {
+  //   await loginMutation.mutateAsync({ email, password });
+  // };
+
   const login = async (email: string, password: string) => {
-    await loginMutation.mutateAsync({ email, password });
+    const response = await loginMutation.mutateAsync({ email, password });
+    
+    // AGAR apka backend response mein user object bhej raha hai:
+    if (response?.user?.role && typeof window !== "undefined") {
+      localStorage.setItem(ROLE_STORAGE_KEY, response.user.role);
+    }
   };
 
   const register = async (email: string, password: string, role?: UserRole) => {
-    await registerMutation.mutateAsync({ email, password });
+    await registerMutation.mutateAsync({ email, password , role });
     if (role && typeof window !== "undefined") {
       localStorage.setItem(ROLE_STORAGE_KEY, role);
     }
@@ -63,10 +72,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-}
+// export function useAuth() {
+//   const context = useContext(AuthContext);
+//   if (!context) {
+//     throw new Error("useAuth must be used within an AuthProvider");
+//   }
+//   return context;
+// }

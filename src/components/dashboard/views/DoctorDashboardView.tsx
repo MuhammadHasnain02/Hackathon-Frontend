@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Calendar, Stethoscope, Send, CheckCircle } from "lucide-react";
+import { Calendar, Stethoscope, Send, CheckCircle, XCircle } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { appointmentsApi, type Appointment } from "@/api/appointments";
 import Loader from "@/components/common/Loader";
@@ -17,8 +17,13 @@ export default function DoctorDashboardView() {
     queryFn: () => appointmentsApi.getList(),
   });
 
-  const confirmMutation = useMutation({
+  const acceptMutation = useMutation({
     mutationFn: (id: string) => appointmentsApi.update(id, { status: "confirmed" }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["appointments"] }),
+  });
+
+  const declineMutation = useMutation({
+    mutationFn: (id: string) => appointmentsApi.update(id, { status: "cancelled" }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["appointments"] }),
   });
 
@@ -62,19 +67,45 @@ export default function DoctorDashboardView() {
                       <p className="text-xs text-slate-500 dark:text-slate-400">
                         {new Date(apt.scheduledAt).toLocaleString()} · {apt.reason || "—"}
                       </p>
-                      <span className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium ${apt.status === "pending" ? "bg-amber-100 text-amber-800 dark:bg-amber-900/50" : "bg-teal-100 text-teal-700 dark:bg-teal-900/50"}`}>
-                        {apt.status}
+                      <span
+                        className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
+                          apt.status === "pending"
+                            ? "bg-amber-100 text-amber-800 dark:bg-amber-900/50"
+                            : apt.status === "confirmed"
+                            ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50"
+                            : apt.status === "cancelled"
+                            ? "bg-red-100 text-red-800 dark:bg-red-900/50"
+                            : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                        }`}
+                      >
+                        {apt.status === "pending"
+                          ? "Pending"
+                          : apt.status === "confirmed"
+                          ? "Accepted"
+                          : apt.status === "cancelled"
+                          ? "Declined"
+                          : apt.status}
                       </span>
                     </div>
                     {apt.status === "pending" && (
-                      <button
-                        type="button"
-                        onClick={() => confirmMutation.mutate(apt._id)}
-                        disabled={confirmMutation.isPending}
-                        className="inline-flex items-center gap-1 rounded-xl bg-teal-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-teal-700 disabled:opacity-50"
-                      >
-                        <CheckCircle className="h-4 w-4" /> Accept / Confirm
-                      </button>
+                      <div className="flex flex-col items-end gap-2 sm:flex-row">
+                        <button
+                          type="button"
+                          onClick={() => acceptMutation.mutate(apt._id)}
+                          disabled={acceptMutation.isPending}
+                          className="inline-flex items-center gap-1 rounded-xl bg-teal-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-teal-700 disabled:opacity-50"
+                        >
+                          <CheckCircle className="h-4 w-4" /> Accept
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => declineMutation.mutate(apt._id)}
+                          disabled={declineMutation.isPending}
+                          className="inline-flex items-center gap-1 rounded-xl bg-red-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-red-700 disabled:opacity-50"
+                        >
+                          <XCircle className="h-4 w-4" /> Decline
+                        </button>
+                      </div>
                     )}
                   </div>
                 ))

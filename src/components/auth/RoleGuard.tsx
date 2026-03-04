@@ -33,30 +33,34 @@ export default function RoleGuard({
     typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
 
   useEffect(() => {
+    if (loading) return;
+
     if (requireAuth) {
-      if (!token) {
+      if (!token || !user) {
         router.replace("/login");
         return;
       }
-      if (loading) {
-        return;
-      }
-      if (!user) {
-        router.replace("/login");
-        return;
-      }
+      // if (loading) {
+      //   return;
+      // }
+      // if (!user) {
+      //   router.replace("/login");
+      //   return;
+      // }
       const role =
         user.role ??
         (typeof window !== "undefined"
           ? (localStorage.getItem(ROLE_STORAGE_KEY) as UserRole | null)
           : null);
+
       if (allowedRoles.length > 0 && role && !allowedRoles.includes(role)) {
         router.replace(ROLE_DASHBOARD[role as UserRole] ?? "/dashboard");
         return;
       }
     } else {
-      if (token) {
-        router.replace("/dashboard"); // Will redirect to role-specific dashboard
+      if (token && user) {
+        const target = ROLE_DASHBOARD[user.role as UserRole] || "/dashboard";
+        router.replace(target); // Will redirect to role-specific dashboard
         return;
       }
     }

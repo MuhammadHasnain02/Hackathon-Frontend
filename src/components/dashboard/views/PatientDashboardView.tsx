@@ -1,17 +1,44 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { FileText, Download, Calendar, Activity, CalendarPlus } from "lucide-react";
+import { FileText, Download, Calendar, Activity, CalendarPlus, Trash2, XCircle } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { appointmentsApi, type Appointment } from "@/api/appointments";
 import Loader from "@/components/common/Loader";
+import axios from "axios";
 
 export default function PatientDashboardView() {
   const queryClient = useQueryClient();
   const [scheduledAt, setScheduledAt] = useState("");
   const [reason, setReason] = useState("");
+
+  const [doctorId, setDoctorId] = useState("" as string); // Selected Doctor ID
+  const [doctors, setDoctors] = useState<{ _id: string; email: string }[]>([]);
+
+  // Fetch Doctors List
+
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        // LocalStorage se token nikaalein
+        const token = localStorage.getItem("accessToken");
+        
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/doctors`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        setDoctors(res.data.doctors || []);
+      } catch (err) {
+        console.error("Failed to fetch doctors:", err);
+      }
+    };
+    
+    fetchDoctors();
+  }, []);
 
   const { data, isLoading } = useQuery({
     queryKey: ["appointments"],
@@ -19,12 +46,25 @@ export default function PatientDashboardView() {
   });
 
   const createMutation = useMutation({
-    mutationFn: () => appointmentsApi.create({ scheduledAt, reason: reason || undefined }),
+    mutationFn: () => appointmentsApi.create({ scheduledAt, reason: reason || undefined , doctorId: doctorId || undefined }),
+    // mutationFn: () => appointmentsApi.create({ scheduledAt, reason: reason || undefined }),
+    
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
       setScheduledAt("");
       setReason("");
+      setDoctorId("");
     },
+  });
+
+  const cancelMutation = useMutation({
+    mutationFn: (id: string) => appointmentsApi.update(id, { status: "cancelled" }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["appointments"] }),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => appointmentsApi.remove(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["appointments"] }),
   });
 
   const appointments = data?.appointments ?? [];
@@ -55,6 +95,24 @@ export default function PatientDashboardView() {
               if (scheduledAt) createMutation.mutate();
             }}
           >
+            {/* Doctor Selection Dropdown */}
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold uppercase text-slate-400">Select Doctor</label>
+              <select
+                required
+                value={doctorId}
+                onChange={(e) => setDoctorId(e.target.value)}
+                className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+              >
+                <option value="">-- Choose a Doctor --</option>
+                {doctors.map((doc) => (
+                  <option key={doc._id} value={doc._id}>
+                    {doc.email}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <input
               type="datetime-local"
               required
@@ -102,16 +160,60 @@ export default function PatientDashboardView() {
                 <p className="text-sm text-slate-500">No appointments yet.</p>
               ) : (
                 appointments.map((apt: Appointment) => (
-                  <div key={apt._id} className="flex gap-3">
-                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-teal-100 dark:bg-teal-900/50">
+                  <div key={apt._id} className="flex items-start justify-between gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-teal-100 dark:bg-teal-900/50">
                       <Calendar className="h-5 w-5 text-teal-600" />
                     </div>
-                    <div>
+                    <div className="flex-1">
                       <p className="font-medium text-slate-800 dark:text-slate-200">
                         {new Date(apt.scheduledAt).toLocaleString()}
                       </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">{apt.status}</p>
-                      {apt.reason && <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{apt.reason}</p>}
+                      <div className="mt-1 flex flex-wrap items-center gap-2">
+                        <span
+                          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                            apt.status === "pending"
+                              ? "bg-amber-100 text-amber-800 dark:bg-amber-900/50"
+                              : apt.status === "confirmed"
+                              ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50"
+                              : apt.status === "cancelled"
+                              ? "bg-red-100 text-red-800 dark:bg-red-900/50"
+                              : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                          }`}
+                        >
+                          {apt.status === "pending"
+                            ? "Pending"
+                            : apt.status === "confirmed"
+                            ? "Accepted"
+                            : apt.status === "cancelled"
+                            ? "Declined"
+                            : apt.status}
+                        </span>
+                        {apt.reason && (
+                          <span className="text-xs text-slate-400 dark:text-slate-400">
+                            • {apt.reason}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end gap-2">
+                      {apt.status === "pending" && (
+                        <button
+                          type="button"
+                          onClick={() => cancelMutation.mutate(apt._id)}
+                          disabled={cancelMutation.isPending}
+                          className="inline-flex items-center gap-1 rounded-xl bg-slate-800 px-3 py-1.5 text-xs font-semibold text-slate-100 transition hover:bg-slate-700 disabled:opacity-50"
+                        >
+                          <XCircle className="h-4 w-4" /> Cancel
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => deleteMutation.mutate(apt._id)}
+                        disabled={deleteMutation.isPending}
+                        className="inline-flex items-center gap-1 rounded-xl bg-red-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-red-700 disabled:opacity-50"
+                      >
+                        <Trash2 className="h-4 w-4" /> Delete
+                      </button>
                     </div>
                   </div>
                 ))
