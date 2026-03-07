@@ -7,8 +7,8 @@ const footerLinks = [
   { href: "#features", label: "Features" },
   { href: "/login", label: "Login" },
   { href: "/signup", label: "Sign Up" },
-  { href: "/privacy", label: "Privacy" },
-  { href: "/terms", label: "Terms" },
+  // { href: "/privacy", label: "Privacy" },
+  // { href: "/terms", label: "Terms" },
 ];
 
 const socialLinks = [
