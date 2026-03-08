@@ -63,6 +63,7 @@ export default function SignupPage() {
     }
 
     setLoading(true);
+
     try {
       await register(email, password, role);
       router.push("/dashboard");
@@ -103,6 +104,7 @@ export default function SignupPage() {
               </span>
             </div>
             <div className="w-full max-w-md space-y-6 rounded-2xl border border-white/10 bg-slate-800/50 p-6 shadow-2xl backdrop-blur-sm sm:p-8">
+
               <div className="space-y-1 text-center">
                 <h1 className="font-[family-name:var(--font-montserrat)] text-2xl font-bold tracking-tight text-slate-50">
                   Create your account
@@ -111,13 +113,16 @@ export default function SignupPage() {
                   Join HealthClinic AI and start managing your clinic today.
                 </p>
               </div>
+
               {error && (
                 <p className="rounded-xl border border-red-500/30 bg-red-950/40 p-3 text-center text-sm text-red-200">
                   {error}
                 </p>
               )}
+
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-1.5">
+
+                {/* <div className="space-y-1.5">
                   <label
                     htmlFor="role"
                     className="block text-sm font-medium text-slate-300"
@@ -136,7 +141,8 @@ export default function SignupPage() {
                       </option>
                     ))}
                   </select>
-                </div>
+                </div> */}
+
                 <div className="space-y-1.5">
                   <label
                     htmlFor="email"
@@ -165,6 +171,7 @@ export default function SignupPage() {
                     </p>
                   )}
                 </div>
+
                 <div className="space-y-1.5">
                   <label
                     htmlFor="password"
@@ -194,6 +201,7 @@ export default function SignupPage() {
                     </p>
                   )}
                 </div>
+
                 <div className="space-y-1.5">
                   <label
                     htmlFor="confirmPassword"
@@ -226,6 +234,7 @@ export default function SignupPage() {
                     </p>
                   )}
                 </div>
+
                 <Button
                   type="submit"
                   variant="primary"
@@ -236,7 +245,9 @@ export default function SignupPage() {
                 >
                   {loading ? "Creating account..." : "Create account"}
                 </Button>
+
               </form>
+
               <p className="text-center text-sm text-slate-400">
                 Already have an account?{" "}
                 <Link
@@ -246,6 +257,7 @@ export default function SignupPage() {
                   Sign in
                 </Link>
               </p>
+
             </div>
           </main>
           <Footer />
