@@ -1,26 +1,69 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { UserPlus, CalendarPlus, Calendar } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { appointmentsApi, type Appointment } from "@/api/appointments";
 import Loader from "@/components/common/Loader";
+import axios from "axios";
 
 /**
  * Receptionist: Read-only appointments table (no medical edit).
  * Can register patients and book appointments.
  */
 export default function ReceptionistDashboardView() {
+  const queryClient = useQueryClient();
+
   const [regName, setRegName] = useState("");
   const [regEmail, setRegEmail] = useState("");
-  const [bookPatient, setBookPatient] = useState("");
-  const [bookDate, setBookDate] = useState("");
+  
+  const [bookPatient, setBookPatient] = useState("" as string);
+  // const [bookDate, setBookDate] = useState("");
+  const [scheduledAt, setScheduledAt] = useState("");
+  const [reason, setReason] = useState("");
+
+  const [doctorId, setDoctorId] = useState("" as string); // Selected Doctor ID
+  const [doctors, setDoctors] = useState<{ _id: string; email: string }[]>([]);
+
+  // Fetch Doctors List
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        // LocalStorage se token nikaalein
+        const token = localStorage.getItem("accessToken");
+
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/doctors`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        setDoctors(res.data.doctors || []);
+      } catch (err) {
+        console.error("Failed to fetch doctors:", err);
+      }
+    };
+    
+    fetchDoctors();
+  }, []);
 
   const { data, isLoading } = useQuery({
     queryKey: ["appointments"],
     queryFn: () => appointmentsApi.getList(),
+  });
+
+  const createMutation = useMutation({
+    mutationFn: () => appointmentsApi.create({ scheduledAt, reason: reason || undefined , doctorId: doctorId || undefined, patientId: bookPatient }),
+    // mutationFn: () => appointmentsApi.create({ scheduledAt, reason: reason || undefined }),
+    
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
+      setScheduledAt("");
+      setReason("");
+      setDoctorId("");
+    },
   });
 
   const appointments = data?.appointments ?? [];
@@ -44,20 +87,21 @@ export default function ReceptionistDashboardView() {
               Patient Registration
             </h3>
           </div>
+
           <form className="mt-4 space-y-3" onSubmit={(e) => e.preventDefault()}>
             <input
               type="text"
               placeholder="Full name"
               value={regName}
               onChange={(e) => setRegName(e.target.value)}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+              className="w-full rounded-xl border border-slate-300 text-slate-600 placeholder:text-slate-500 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
             />
             <input
               type="email"
               placeholder="Email"
               value={regEmail}
               onChange={(e) => setRegEmail(e.target.value)}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+              className="w-full rounded-xl border border-slate-300 text-slate-600 placeholder:text-slate-500 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
             />
             <button
               type="submit"
@@ -80,22 +124,59 @@ export default function ReceptionistDashboardView() {
               Appointment Booking
             </h3>
           </div>
-          <form className="mt-4 space-y-3" onSubmit={(e) => e.preventDefault()}>
+          <form className="mt-4 space-y-3" 
+            onSubmit={(e) => {
+              e.preventDefault()
+              if (scheduledAt && doctorId) {
+                createMutation.mutate();
+              } else {
+                alert("Please select a doctor and date");
+              }
+            }}
+          >
+
+            {/* Doctor Selection Dropdown */}
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold uppercase text-slate-400">Select Doctor</label>
+              <select
+                required
+                value={doctorId}
+                onChange={(e) => setDoctorId(e.target.value)}
+                className="w-full rounded-xl border border-slate-300 text-slate-600 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+              >
+                <option value="">-- Choose a Doctor --</option>
+                {doctors.map((doc) => (
+                  <option key={doc._id} value={doc._id}>
+                    {doc.email}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <input
               type="text"
               placeholder="Patient name or ID"
               value={bookPatient}
               onChange={(e) => setBookPatient(e.target.value)}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+              className="w-full rounded-xl border border-slate-300 text-slate-600 placeholder:text-slate-500 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
             />
             <input
               type="datetime-local"
-              value={bookDate}
-              onChange={(e) => setBookDate(e.target.value)}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+              value={scheduledAt}
+              onChange={(e) => setScheduledAt(e.target.value)}
+              className="w-full rounded-xl border border-slate-300 text-slate-600 placeholder:text-slate-500 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
             />
+            <input
+              type="text"
+              placeholder="Reason (optional)"
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              className="w-full rounded-xl border border-slate-300 text-slate-600 placeholder:text-slate-500 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+            />
+
             <button
               type="submit"
+              disabled={createMutation.isPending || !scheduledAt}
               className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-teal-700"
             >
               <CalendarPlus className="h-4 w-4" /> Book Appointment

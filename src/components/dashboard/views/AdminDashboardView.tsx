@@ -292,7 +292,7 @@ export default function AdminDashboardView() {
                                   status: e.target.value as AppointmentStatus,
                                 })
                               }
-                              className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                              className="rounded-lg border border-slate-300 text-slate-600 bg-white px-2 py-1 text-xs dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
                             >
                               <option value="pending">Pending</option>
                               <option value="confirmed">Accepted</option>

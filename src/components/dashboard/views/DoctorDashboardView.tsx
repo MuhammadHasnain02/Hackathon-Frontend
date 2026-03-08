@@ -134,7 +134,7 @@ export default function DoctorDashboardView() {
             onChange={(e) => setDiagnosisInput(e.target.value)}
             placeholder="e.g. headache, fever, fatigue for 3 days..."
             rows={4}
-            className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+            className="mt-1 w-full rounded-xl border border-slate-300 text-slate-600 placeholder:text-slate-500 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
           />
           <button
             type="button"

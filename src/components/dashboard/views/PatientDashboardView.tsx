@@ -18,7 +18,6 @@ export default function PatientDashboardView() {
   const [doctors, setDoctors] = useState<{ _id: string; email: string }[]>([]);
 
   // Fetch Doctors List
-
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
@@ -102,7 +101,7 @@ export default function PatientDashboardView() {
                 required
                 value={doctorId}
                 onChange={(e) => setDoctorId(e.target.value)}
-                className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+                className="w-full rounded-xl border border-slate-300 text-slate-600 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
               >
                 <option value="">-- Choose a Doctor --</option>
                 {doctors.map((doc) => (
@@ -118,14 +117,14 @@ export default function PatientDashboardView() {
               required
               value={scheduledAt}
               onChange={(e) => setScheduledAt(e.target.value)}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+              className="w-full rounded-xl border border-slate-300 text-slate-600 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
             />
             <input
               type="text"
               placeholder="Reason (optional)"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+              className="w-full rounded-xl border border-slate-300 text-slate-600 placeholder:text-slate-500 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
             />
             <button
               type="submit"

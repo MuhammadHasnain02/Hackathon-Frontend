@@ -18,7 +18,7 @@ export const appointmentsApi = {
   getList: () =>
     api.get<{ appointments: Appointment[] }>("/appointments").then((r) => r.data),
 
-  create: (data: { scheduledAt: string; reason?: string; doctorId?: string }) =>
+  create: (data: { scheduledAt: string; reason?: string; doctorId?: string; patientId?: string }) =>
     api
       .post<{ appointment: Appointment }>("/appointments", data)
       .then((r) => r.data),
